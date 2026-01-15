@@ -1,0 +1,123 @@
+
+import express, { Request, Response } from 'express';
+import { patientService } from '../services/PatientService';
+
+const router = express.Router();
+
+// POST /api/patients - Create a new patient
+router.post('/', async (req: Request, res: Response) => {
+  try {
+    const { name, address, conditions } = req.body;
+
+    if (!name || !address) {
+      return res.status(400).json({
+        success: false,
+        error: 'Name and address are required',
+      });
+    }
+
+    const patient = await patientService.createPatient({
+      name,
+      address,
+      conditions: conditions || [],
+    });
+
+    res.status(201).json({
+      success: true,
+      data: patient,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// GET /api/patients/:id - Get patient by ID
+router.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;           
+    const patient = await patientService.getPatient(id);
+
+    if (!patient) {
+      return res.status(404).json({
+        success: false,
+        error: 'Patient not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      data: patient,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// GET /api/patients - List all patients
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const patients = await patientService.listPatients();
+
+    res.json({
+      success: true,
+      data: patients,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// DELETE /api/patients/:id - Delete a patient
+router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;           
+    await patientService.deletePatient(id);
+
+    res.json({
+      success: true,
+      message: 'Patient deleted successfully',
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// PUT /api/patients/:id/diagnosis - Update diagnosis
+router.put('/:id/diagnosis', async (req: Request, res: Response) => {
+  try {
+    const { diagnosis } = req.body;
+    if (!diagnosis) {
+      return res.status(400).json({
+        success: false,
+        error: 'Diagnosis is required',
+      });
+    }
+
+    const id = req.params.id as string;           
+    const patient = await patientService.updateDiagnosis(id, diagnosis);
+
+    res.json({
+      success: true,
+      data: patient,
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+export default router;
