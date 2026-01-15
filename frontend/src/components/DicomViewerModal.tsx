@@ -3,6 +3,7 @@ import { X, ZoomIn, ZoomOut, RotateCw, Maximize2 } from 'lucide-react';
 import * as cornerstone from 'cornerstone-core';
 import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import * as dicomParser from 'dicom-parser';
+import { config } from '../config'; // ✅ IMPORT CONFIG
 
 cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
 cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
@@ -38,7 +39,7 @@ export function DicomViewerModal({ isOpen, onClose, imageUrl, imageInfo }: Dicom
     try {
       cornerstone.enable(element);
 
-      const fullUrl = `http://localhost:3000${imageUrl}`;
+      const fullUrl = `${config.apiUrl}${imageUrl}`; // ✅ FIXED: Use config instead of hardcoded localhost
       const imageId = `wadouri:${fullUrl}`;
 
       cornerstone.loadImage(imageId)
@@ -104,76 +105,71 @@ export function DicomViewerModal({ isOpen, onClose, imageUrl, imageInfo }: Dicom
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div>
-            <h2 className="text-xl font-semibold">DICOM Viewer</h2>
-            <p className="text-sm text-gray-600">
-              {imageInfo.type} - {imageInfo.disease}
-            </p>
+            <h2 className="text-xl font-bold text-gray-900">DICOM Viewer</h2>
+            <p className="text-sm text-gray-600">{imageInfo.type} - {imageInfo.disease}</p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            title="Close"  // ✅ ADDED: Tooltip
+            className="text-gray-500 hover:text-gray-700 transition-colors"
           >
-            <X className="w-6 h-6" />
+            <X size={24} />
           </button>
         </div>
 
         {/* Toolbar */}
-        <div className="flex items-center gap-2 p-4 border-b bg-gray-50">
+        <div className="flex items-center gap-2 p-3 bg-gray-50 border-b border-gray-200">
           <button
             onClick={handleZoomIn}
-            className="p-2 hover:bg-gray-200 rounded transition-colors"
-            title="Zoom In"  // ✅ ADDED: Tooltip
+            className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            title="Zoom In"
           >
-            <ZoomIn className="w-5 h-5" />
+            <ZoomIn size={20} />
           </button>
           <button
             onClick={handleZoomOut}
-            className="p-2 hover:bg-gray-200 rounded transition-colors"
-            title="Zoom Out"  // ✅ ADDED: Tooltip
+            className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            title="Zoom Out"
           >
-            <ZoomOut className="w-5 h-5" />
+            <ZoomOut size={20} />
           </button>
           <button
             onClick={handleRotate}
-            className="p-2 hover:bg-gray-200 rounded transition-colors"
-            title="Rotate 90°"  // ✅ ADDED: Tooltip
+            className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            title="Rotate 90°"
           >
-            <RotateCw className="w-5 h-5" />
+            <RotateCw size={20} />
           </button>
           <button
             onClick={handleReset}
-            className="p-2 hover:bg-gray-200 rounded transition-colors"
-            title="Reset View"  // ✅ ADDED: Tooltip
+            className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            title="Reset View"
           >
-            <Maximize2 className="w-5 h-5" />
+            <Maximize2 size={20} />
           </button>
         </div>
 
         {/* Viewer Area */}
-        <div className="flex-1 relative bg-black">
+        <div className="flex-1 relative bg-black overflow-hidden">
+          <div
+            ref={viewerRef}
+            className="w-full h-full"
+            style={{ minHeight: '400px' }}
+          />
           {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-white">Loading DICOM image...</div>
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="text-white text-lg">Loading DICOM image...</div>
             </div>
           )}
           {error && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-red-500">{error}</div>
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="text-red-500 text-lg">{error}</div>
             </div>
           )}
-          <div
-            ref={viewerRef}
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-          />
         </div>
       </div>
     </div>
