@@ -1,0 +1,67 @@
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import type { UploadImageDTO } from '../types';
+import { imageApi } from '../api/imageApi';
+
+const IMAGES_QUERY_KEY = (patientId: string) => ['images', patientId];
+
+export function usePatientImages(patientId: string) {
+  return useQuery({
+    queryKey: IMAGES_QUERY_KEY(patientId),
+    queryFn: () => imageApi.getImagesByPatient(patientId),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+    enabled: !!patientId,
+  });
+}
+
+export function useUploadImage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UploadImageDTO) => imageApi.uploadImage(data),
+    onSuccess: (newImage) => {
+      queryClient.invalidateQueries({
+        queryKey: IMAGES_QUERY_KEY(newImage.patientID),
+      });
+    },
+  });
+}
+
+export function useClassifyImage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      imageId,
+      imageType,
+      diseaseType,
+    }: {
+      imageId: string;
+      imageType: string;
+      diseaseType: string;
+    }) => imageApi.classifyImage(imageId, imageType, diseaseType),
+    onSuccess: (updatedImage) => {
+      queryClient.invalidateQueries({
+        queryKey: IMAGES_QUERY_KEY(updatedImage.patientID),
+      });
+    },
+  });
+}
+
+export function useDeleteImage() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (imageId: string) => imageApi.deleteImage(imageId),
+    onSuccess: () => {
+      // Note: you may want to invalidate all images queries
+      queryClient.invalidateQueries({
+        queryKey: ['images'],
+      });
+    },
+  });
+}
