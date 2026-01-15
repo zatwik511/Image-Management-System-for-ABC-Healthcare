@@ -16,12 +16,13 @@ import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
 
-// 🚀 1. CORS - Configured for Frontend
+// 🚀 1. CORS - Configured for Frontend (LOCAL + PRODUCTION)
 app.use(cors({
   origin: [
-    'http://localhost:5173', // Vite dev server
-    'http://localhost:3000', // Backend itself
-    'http://127.0.0.1:5173' // Alternative localhost
+    'http://localhost:5173',  // Vite dev server
+    'http://localhost:3000',  // Backend itself
+    'http://127.0.0.1:5173',  // Alternative localhost
+    'https://image-management-system-for-abc-iug9.onrender.com' // ✅ PRODUCTION FRONTEND (CORRECT URL!)
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
@@ -73,6 +74,7 @@ app.use('*', (req: Request, res: Response) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`🚀 IMS Backend running on http://localhost:${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
