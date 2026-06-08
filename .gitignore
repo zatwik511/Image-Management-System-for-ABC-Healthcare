@@ -33,6 +33,9 @@ Thumbs.db
 *.swp
 *.swo
 
+# Claude Code
+.claude/
+
 # Uploaded files
 backend/uploads/*
 !backend/uploads/.gitkeep

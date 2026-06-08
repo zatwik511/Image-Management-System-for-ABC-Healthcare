@@ -57,8 +57,22 @@ app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// 3. Serve static files from uploads folder
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// 3. Serve uploaded images — proxy from S3 in production, local disk in dev
+if (process.env.AWS_S3_BUCKET) {
+  const { getFromS3 } = require('./services/s3Service');
+  app.get('/uploads/*', async (req: Request, res: Response) => {
+    try {
+      const key = req.path.replace(/^\/uploads\//, '');
+      const { body, contentType } = await getFromS3(key);
+      res.setHeader('Content-Type', contentType);
+      body.pipe(res);
+    } catch {
+      res.status(404).json({ success: false, error: 'Image not found' });
+    }
+  });
+} else {
+  app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+}
 
 // 4. Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
@@ -103,12 +117,17 @@ app.use('/api/vitals', authMiddleware, vitalRoutes);
 // 7. Global error handler
 app.use(errorHandler);
 
-// 8. 404 handler
+// 8. Serve built React frontend (production single-deployment)
+const frontendDist = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDist));
+
+// 9. SPA fallback — serve index.html for any non-API route (React Router)
 app.use('*', (req: Request, res: Response) => {
-  res.status(404).json({
-    success: false,
-    error: `Route ${req.originalUrl} not found`
-  });
+  if (req.originalUrl.startsWith('/api')) {
+    res.status(404).json({ success: false, error: `Route ${req.originalUrl} not found` });
+  } else {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  }
 });
 
 export default app;

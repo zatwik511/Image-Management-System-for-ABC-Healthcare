@@ -1,6 +1,5 @@
-import fs from 'fs';
-import path from 'path';
 import { pool } from '../database/db';
+import { deleteFromS3 } from './s3Service';
 import { MedicalImage, UploadImageDTO } from '../models/types';
 import { auditService } from './AuditService';
 import logger from '../logger';
@@ -37,7 +36,7 @@ export class ImageService {
       `INSERT INTO medical_images (patient_id, uploaded_at, uploaded_by, type, disease_classification, image_url)
        VALUES ($1, NOW(), $2, $3, $4, $5)
        RETURNING *`,
-      [data.patientID, uploadedBy, data.imageType, data.diseaseType || null, `/uploads/${data.fileName}`]
+      [data.patientID, uploadedBy, data.imageType, data.diseaseType || null, data.imageUrl]
     );
     const image = this.transformToMedicalImage(result.rows[0]);
     await auditService.logAction({
@@ -115,16 +114,13 @@ export class ImageService {
     const imageUrl: string | undefined = fileResult.rows[0]?.image_url;
 
     if (imageUrl) {
-      const relativePath = imageUrl.startsWith('/') ? imageUrl.slice(1) : imageUrl;
-      const absolutePath = path.join(process.cwd(), relativePath);
+      // imageUrl is stored as /uploads/<key> — strip the prefix to get the S3 key
+      const key = imageUrl.replace(/^\/uploads\//, '');
       try {
-        await fs.promises.unlink(absolutePath);
+        await deleteFromS3(key);
       } catch (err: unknown) {
-        if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
-          logger.error({ path: absolutePath, err }, 'ImageService: could not delete file');
-          throw new Error('Failed to delete image file; database record was not removed');
-        }
-        // ENOENT: file already gone — safe to proceed
+        logger.error({ key, err }, 'ImageService: could not delete file from S3');
+        throw new Error('Failed to delete image from S3; database record was not removed');
       }
     }
 

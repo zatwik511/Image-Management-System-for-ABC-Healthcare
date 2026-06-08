@@ -2,8 +2,8 @@ import express from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 import { imageService } from '../services/ImageService';
+import { uploadToS3 } from '../services/s3Service';
 import { requireRole } from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -27,16 +27,8 @@ const ALLOWED_IMAGE_MIMETYPES = new Set([
 
 const DICOM_EXT = /\.(dcm|dicom|dic)$/i;
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => { cb(null, 'uploads/'); },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-  },
-});
-
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
@@ -66,7 +58,6 @@ router.post('/upload', requireRole('admin', 'doctor', 'radiologist'), upload.sin
     // Secondary MIME type check — defence in depth in case fileFilter is bypassed
     const ext = path.extname(req.file.originalname).toLowerCase();
     if (!DICOM_EXT.test(ext) && !ALLOWED_IMAGE_MIMETYPES.has(req.file.mimetype)) {
-      fs.unlink(req.file.path, () => {});
       return res.status(400).json({ success: false, error: 'Invalid file type' });
     }
 
@@ -79,12 +70,14 @@ router.post('/upload', requireRole('admin', 'doctor', 'radiologist'), upload.sin
 
     const diseaseType = sanitizeDiseaseType(rawDiseaseType);
     if (rawDiseaseType && diseaseType === null) {
-      fs.unlink(req.file!.path, () => {});
       return res.status(400).json({ success: false, error: 'Invalid diseaseType: must be 255 characters or fewer and contain no HTML' });
     }
 
+    const uniqueKey = `${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
+    await uploadToS3(uniqueKey, req.file!.buffer, req.file!.mimetype || 'application/octet-stream');
+
     const image = await imageService.uploadImage(
-      { patientID, imageType, diseaseType: diseaseType || 'unclassified', fileName: req.file!.filename },
+      { patientID, imageType, diseaseType: diseaseType || 'unclassified', imageUrl: `/uploads/${uniqueKey}` },
       uploadedBy
     );
     res.status(201).json({ success: true, data: image });

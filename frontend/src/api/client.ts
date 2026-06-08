@@ -2,10 +2,10 @@ import axios from 'axios';
 import type { AxiosInstance, AxiosError } from 'axios';
 import type { APIResponse } from '../types';
 
-if (import.meta.env.PROD && !import.meta.env.VITE_API_URL) {
-  throw new Error('[MediSync] VITE_API_URL is not set. The app cannot start in production without an explicit API URL.');
-}
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// In single-deployment mode (frontend served by Express), VITE_API_URL is not set
+// and the API is on the same origin — baseURL becomes '/api'.
+// In dev, fall back to localhost. For separate deployments, set VITE_API_URL explicitly.
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : '');
 const API_TIMEOUT = parseInt(import.meta.env.VITE_API_TIMEOUT || '10000');
 
 export const apiClient: AxiosInstance = axios.create({

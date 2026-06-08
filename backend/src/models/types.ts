@@ -55,8 +55,7 @@ export interface UploadImageDTO {
   patientID: string;
   imageType: 'MRI' | 'CT' | 'Xray' | 'DICOM';
   diseaseType: string;
-  fileName: string;
-  imageUrl?: string;
+  imageUrl: string;
 }
 
 export interface PatientHistory {
