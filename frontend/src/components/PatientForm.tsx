@@ -52,7 +52,7 @@ export function PatientForm() {
       name:       !name.trim()       ? 'Full name is required'                      : '',
       address:    !address.trim()    ? 'Address is required'                        : '',
       conditions: condList.length === 0 ? 'At least one medical condition is required' : '',
-      phone:      phoneVal && !/^[\d\s\+\-\(\)]{7,20}$/.test(phoneVal) ? 'Enter a valid phone number' : '',
+      phone:      phoneVal && !/^[\d\s+\-()]{7,20}$/.test(phoneVal) ? 'Enter a valid phone number' : '',
       email:      emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal) ? 'Enter a valid email address' : '',
     };
   }

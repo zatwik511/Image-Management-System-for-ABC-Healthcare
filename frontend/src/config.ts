@@ -1,4 +1,4 @@
-// @ts-ignore - Vite env variable
+// @ts-expect-error - Vite env variable
 const API_URL: string = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const config = {

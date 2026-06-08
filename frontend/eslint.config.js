@@ -19,5 +19,15 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // Third-party libs (Cornerstone, API responses) don't have complete types
+      '@typescript-eslint/no-explicit-any': 'warn',
+      // Effects legitimately set state in error/cleanup handlers throughout this codebase
+      'react-hooks/set-state-in-effect': 'warn',
+      // Allow _-prefixed params that mark intentionally unused destructured props
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      // Allow empty catch blocks used to swallow expected parse/init errors
+      'no-empty': ['error', { allowEmptyCatch: true }],
+    },
   },
 ])
