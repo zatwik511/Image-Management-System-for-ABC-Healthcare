@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { apiClient } from '../api/client';
 
@@ -20,8 +20,8 @@ export function useSessionTimeout() {
     navigate('/login', { replace: true });
   }, [navigate]);
 
-  // Keep ref current
-  logoutRef.current = logout;
+  // Keep ref current so interval callback always sees the latest logout fn
+  useLayoutEffect(() => { logoutRef.current = logout; });
 
   const checkTimeout = useCallback(() => {
     if (!localStorage.getItem('staffId')) return;
