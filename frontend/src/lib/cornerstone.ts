@@ -8,6 +8,8 @@ export function initCornerstone(): void {
   if (initialized) return;
   cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
   cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
-  cornerstoneWADOImageLoader.configure({ useWebWorkers: true });
+  // useWebWorkers requires codec worker files served as separate static assets,
+  // which Vite does not bundle — disable to run decoding on the main thread instead
+  cornerstoneWADOImageLoader.configure({ useWebWorkers: false });
   initialized = true;
 }
