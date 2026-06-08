@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { X, ZoomIn, ZoomOut, RotateCw, Maximize2, Image as ImageIcon, AlertCircle } from 'lucide-react';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 import * as cornerstone from 'cornerstone-core';
@@ -217,7 +217,7 @@ export function DicomViewerModal({ isOpen, onClose, imageUrl, imageInfo }: Dicom
                 className={`${toolBtn} text-violet-400 hover:text-violet-200 hover:bg-violet-900/40`}
                 title="Narrow window (sharper contrast)"
               >
-                âˆ’W
+                -W
               </button>
               <button
                 onClick={() => handleWindowWidth(100)}
@@ -240,7 +240,7 @@ export function DicomViewerModal({ isOpen, onClose, imageUrl, imageInfo }: Dicom
                 className={`${toolBtn} text-amber-400 hover:text-amber-200 hover:bg-amber-900/30`}
                 title="Lower window level (darker)"
               >
-                âˆ’L
+                -L
               </button>
               <button
                 onClick={() => handleWindowCenter(100)}

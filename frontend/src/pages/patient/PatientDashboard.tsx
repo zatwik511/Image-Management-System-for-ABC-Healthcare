@@ -1,4 +1,4 @@
-﻿import { PatientLayout } from '../../components/PatientLayout';
+import { PatientLayout } from '../../components/PatientLayout';
 import { usePatientProfile, usePatientImageRecords, usePatientFinancial, useMyAppointments } from '../../hooks/usePatientPortal';
 import { Calendar, Image, DollarSign, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';

@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { PlusCircle, Trash2, Pill, ChevronDown, ChevronUp, X, ClipboardList } from 'lucide-react';
 import { usePatientPrescriptions, useCreatePrescription, useDeletePrescription } from '../hooks/usePrescriptions';
 import type { Medication } from '../api/prescriptionApi';

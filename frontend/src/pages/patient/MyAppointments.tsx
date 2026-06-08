@@ -1,4 +1,4 @@
-﻿import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, CalendarPlus, X } from 'lucide-react';
 import { PatientLayout } from '../../components/PatientLayout';
 import { LoadingSpinner } from '../../components/LoadingSpinner';

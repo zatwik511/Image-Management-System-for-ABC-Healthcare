@@ -1,4 +1,4 @@
-﻿import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 import { Menu, X, LogOut, Bell } from 'lucide-react';
 import { useAuth, canAccess } from '../hooks/useAuth';

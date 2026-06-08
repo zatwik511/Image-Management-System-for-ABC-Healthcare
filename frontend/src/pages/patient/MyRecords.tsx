@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { PatientLayout } from '../../components/PatientLayout';
 import { usePatientProfile, usePatientImageRecords, usePatientFinancial, useMyAppointments, useUpdatePatientProfile } from '../../hooks/usePatientPortal';
 import { FileText, Image, DollarSign, Calendar, Pencil, X, Plus, Check } from 'lucide-react';

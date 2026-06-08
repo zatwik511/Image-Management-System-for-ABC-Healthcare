@@ -1,4 +1,4 @@
-﻿import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Calendar, CalendarPlus, FileText, LogOut, Activity } from 'lucide-react';
 
 interface PatientLayoutProps {

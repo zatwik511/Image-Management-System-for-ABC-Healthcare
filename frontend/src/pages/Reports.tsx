@@ -1,4 +1,4 @@
-﻿import { usePatients } from '../hooks/usePatients';
+import { usePatients } from '../hooks/usePatients';
 import { usePatientHistory, useAppointmentAnalytics, useAdvancedAppointmentAnalytics } from '../hooks/useReports';
 import { useState } from 'react';
 import { LoadingSpinner } from '../components/LoadingSpinner';
