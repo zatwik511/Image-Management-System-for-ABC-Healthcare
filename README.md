@@ -2,7 +2,7 @@
 
 **A full-stack Hospital Management System built for real-world clinical workflows**
 
-[![CI](https://github.com/satwikgupta/medisync-hms/actions/workflows/ci.yml/badge.svg)](https://github.com/satwikgupta/medisync-hms/actions/workflows/ci.yml)
+[![CI](https://github.com/zatwik511/MediSync-Hospital-Management-System/actions/workflows/ci.yml/badge.svg)](https://github.com/zatwik511/MediSync-Hospital-Management-System/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
 [![License: ISC](https://img.shields.io/badge/License-ISC-yellow)](LICENSE)
@@ -198,7 +198,7 @@ npm start       →   node backend/dist/app.js
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/satwikgupta/medisync-hms.git
+git clone https://github.com/zatwik511/MediSync-Hospital-Management-System.git
 cd medisync-hms
 npm install
 ```
