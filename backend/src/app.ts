@@ -34,10 +34,10 @@ const app = express();
 
 // 1. CORS
 const LOCALHOST_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-const configuredOrigins = (process.env.ALLOWED_ORIGINS || '')
-  .split(',')
-  .map(o => o.trim())
-  .filter(Boolean);
+const configuredOrigins = [
+  ...(process.env.ALLOWED_ORIGINS || '').split(',').map(o => o.trim()).filter(Boolean),
+  ...(process.env.RENDER_EXTERNAL_URL ? [process.env.RENDER_EXTERNAL_URL] : []),
+];
 
 app.use(cors({
   origin: (origin, callback) => {
