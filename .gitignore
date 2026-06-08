@@ -8,6 +8,7 @@ backend/node_modules/
 .env.local
 .env.production
 frontend/.env
+frontend/.env.*
 backend/.env
 
 # Build outputs
@@ -36,6 +37,19 @@ Thumbs.db
 # Claude Code
 .claude/
 
+# Local credentials reference
+CREDENTIALS.txt
+
 # Uploaded files
 backend/uploads/*
 !backend/uploads/.gitkeep
+
+# Vite scaffold placeholders
+frontend/public/vite.svg
+frontend/src/assets/react.svg
+
+# Generated backend HTML artifact
+backend/public/
+
+# Internal planning documents
+SUGGESTED_IMPROVEMENTS.md
