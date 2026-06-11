@@ -61,7 +61,7 @@ async function seed() {
 
     // ── 2. Staff ──────────────────────────────────────────────────────────────
     console.log('Seeding staff...');
-    const pinHash = await bcrypt.hash('000000', 10);
+    const pinHash = await bcrypt.hash('000000', 12);
 
     const staffDefs = [
       { name: 'Admin User',          address: '1 Hospital Road, London, EC1A 1BB',        role: 'admin',        specialization: 'Administration',       code: 'ADM-001' },

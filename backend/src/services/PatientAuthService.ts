@@ -44,7 +44,7 @@ export class PatientAuthService {
         throw new Error('This email is already registered. Please sign in instead.');
       }
       // Staff created this record with an email but no PIN yet — let the patient claim it
-      const pinHash = await bcrypt.hash(pin, 10);
+      const pinHash = await bcrypt.hash(pin, 12);
       const result = await pool.query(
         `UPDATE patients SET pin = $1, failed_pin_attempts = 0, locked_until = NULL WHERE id = $2 RETURNING id, name, email`,
         [pinHash, row.id]
@@ -56,7 +56,7 @@ export class PatientAuthService {
     if (!name) {
       throw new Error('Full name is required when registering as a new patient');
     }
-    const pinHash = await bcrypt.hash(pin, 10);
+    const pinHash = await bcrypt.hash(pin, 12);
     const result = await pool.query(
       `INSERT INTO patients (name, address, conditions, diagnosis, "totalCost", "medicalHistory", "createdAt", email, pin)
        VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7, $8)

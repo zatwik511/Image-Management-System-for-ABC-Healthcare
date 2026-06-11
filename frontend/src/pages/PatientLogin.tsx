@@ -31,8 +31,8 @@ export function PatientLogin() {
 
       const response = await apiClient.post(endpoint, payload);
       if (response.data.success) {
-        const { id, name: patientName, email: patientEmail } = response.data.data;
-        localStorage.setItem('patientId',    id);
+        const { token, name: patientName, email: patientEmail } = response.data.data;
+        localStorage.setItem('patientToken', token);
         localStorage.setItem('patientName',  patientName);
         localStorage.setItem('patientEmail', patientEmail);
         navigate('/patient-portal');

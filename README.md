@@ -134,7 +134,7 @@ Two completely separate authentication flows share the same Express server:
 
 **Staff** — `POST /api/auth/login` with `staffCode` + `PIN`. Returns a JWT stored in an httpOnly, Secure, SameSite=Strict cookie. The `authMiddleware` verifies the JWT on every protected route and attaches `req.user` with `staffId` and `role`.
 
-**Patient** — `POST /api/patient-auth/login` with `email` + `PIN`. Returns a short-lived JWT stored in localStorage. The `patientAuthMiddleware` reads the `x-patient-id` header and validates the token.
+**Patient** — `POST /api/patient-auth/login` with `email` + `PIN`. Returns a signed JWT (8 h expiry) stored in `localStorage` as `patientToken`. The `patientAuthMiddleware` verifies the `Authorization: Bearer <token>` header on every protected route, checks the `type: "patient"` claim, and sets `req.patientID` from the verified payload — the patient ID is never trusted from a client-supplied header.
 
 **RBAC** — route-level role guards (e.g., admin-only for `/api/staff`, `/api/audit`; read-only for `receptionist` on image routes) are enforced in Express middleware, not just in the UI.
 

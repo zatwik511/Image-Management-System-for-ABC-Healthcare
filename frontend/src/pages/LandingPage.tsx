@@ -8,7 +8,7 @@ export function LandingPage() {
   useEffect(() => {
     if (localStorage.getItem('staffId')) {
       navigate('/dashboard', { replace: true });
-    } else if (localStorage.getItem('patientId')) {
+    } else if (localStorage.getItem('patientToken')) {
       navigate('/patient/appointments', { replace: true });
     }
   }, [navigate]);

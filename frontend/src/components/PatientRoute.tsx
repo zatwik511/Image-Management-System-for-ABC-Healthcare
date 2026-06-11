@@ -5,8 +5,8 @@ interface PatientRouteProps {
 }
 
 export function PatientRoute({ children }: PatientRouteProps) {
-  const patientId = localStorage.getItem('patientId');
-  if (!patientId) {
+  const token = localStorage.getItem('patientToken');
+  if (!token) {
     return <Navigate to="/" replace />;
   }
   return children;

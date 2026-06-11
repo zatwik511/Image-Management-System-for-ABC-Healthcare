@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { patientAuthService, AccountLockedError } from '../services/PatientAuthService';
+import { signPatientToken } from '../middleware/authMiddleware';
 import logger from '../logger';
 
 const router = Router();
@@ -24,7 +25,8 @@ router.post('/register', asyncHandler(async (req, res) => {
   }
 
   const patient = await patientAuthService.register((name || '').trim(), email.trim(), pin);
-  return res.status(201).json({ success: true, data: patient });
+  const token = signPatientToken(patient.id);
+  return res.status(201).json({ success: true, data: { token, ...patient } });
 }));
 
 // POST /api/patient-auth/login
@@ -40,7 +42,8 @@ router.post('/login', asyncHandler(async (req, res) => {
     if (!patient) {
       return res.status(401).json({ success: false, error: 'Invalid email or PIN' });
     }
-    return res.json({ success: true, data: patient });
+    const token = signPatientToken(patient.id);
+    return res.json({ success: true, data: { token, ...patient } });
   } catch (err: unknown) {
     if (err instanceof AccountLockedError) {
       return res.status(429).json({ success: false, error: err.message });

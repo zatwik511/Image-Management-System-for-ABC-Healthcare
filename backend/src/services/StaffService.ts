@@ -30,7 +30,7 @@ export class StaffService {
 
   async createStaff(data: CreateStaffDTO, actorStaffId = ''): Promise<Staff> {
     const staffCode = await this.generateStaffCode(data.role);
-    const defaultPinHash = await bcrypt.hash('000000', 10);
+    const defaultPinHash = await bcrypt.hash('000000', 12);
 
     const result = await pool.query(
       `INSERT INTO staff (name, address, role, specialization, staff_code, pin, created_at)
@@ -99,7 +99,7 @@ export class StaffService {
   }
 
   async resetPin(targetId: string, newPin: string, actorStaffId = ''): Promise<void> {
-    const hash = await bcrypt.hash(newPin, 10);
+    const hash = await bcrypt.hash(newPin, 12);
     await pool.query(`UPDATE staff SET pin = $1 WHERE id = $2`, [hash, targetId]);
     const target = await this.getStaff(targetId);
     await auditService.logAction({

@@ -10,7 +10,7 @@ export function PatientLayout({ children }: PatientLayoutProps) {
   const navigate = useNavigate();
 
   const handleSignOut = () => {
-    localStorage.removeItem('patientId');
+    localStorage.removeItem('patientToken');
     localStorage.removeItem('patientName');
     localStorage.removeItem('patientEmail');
     navigate('/');

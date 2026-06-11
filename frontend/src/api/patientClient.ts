@@ -10,9 +10,9 @@ export const patientClient = axios.create({
 });
 
 patientClient.interceptors.request.use((config) => {
-  const patientId = localStorage.getItem('patientId');
-  if (patientId) {
-    config.headers['x-patient-id'] = patientId;
+  const token = localStorage.getItem('patientToken');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
   }
   return config;
 });
@@ -21,7 +21,7 @@ patientClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('patientId');
+      localStorage.removeItem('patientToken');
       localStorage.removeItem('patientName');
       localStorage.removeItem('patientEmail');
       window.location.href = '/patient-login';
